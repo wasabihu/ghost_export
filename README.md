@@ -5,3 +5,11 @@ ghost_export
 * 导出 的目录为 post
 * created by Wasabi 2013-10-18
 * Version 0.1
+
+<pre>
+# 进入Ghost的目录
+> cd Ghost
+
+# 导出操作
+> python ghost_export.py
+</pre>
