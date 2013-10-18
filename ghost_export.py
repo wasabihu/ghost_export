@@ -10,7 +10,7 @@
 
 
 import sqlite3
-import os
+import os,sys
 
 # 通常只要配置了ghost_path就可以了.
 
@@ -20,7 +20,7 @@ ghost_path = './'
 # ghost_path = 'E:/webroot/demo/Ghost-0.3.2/'
 
 # db 目录
-db_path = ghost_path + 'content/data/ghost-dev.db' 
+db_path = ghost_path + 'content/data/ghost-dev.db'
 
 # 输出目录
 export_path = ghost_path +'post/'
@@ -31,6 +31,7 @@ suffix = '.md'
 def create_file(filename, content):
     f = open(export_path+filename+suffix, 'w')
     f.write(content)
+    f.close()
     
 # 主程序 
 def main():
@@ -38,8 +39,8 @@ def main():
     if not os.path.exists(ghost_path + "post"):
         os.mkdir(ghost_path+"post")
     
-    
-    conn = sqlite3.connect('_ghost-dev.db')
+    print db_path
+    conn = sqlite3.connect(db_path)
     
     c = conn.cursor()
     
@@ -52,12 +53,15 @@ def main():
     
     
     conn.close()
+
     
+reload(sys)                         # 2
+sys.setdefaultencoding('utf-8')     # 3
+# print sys.getdefaultencoding()
 
-
-main()    
-print "已经输出文件到 %s" % export_path
-print "完成.....";    
+main()
+print "export file to %s" % export_path
+print "Finish!";    
     
 
 
