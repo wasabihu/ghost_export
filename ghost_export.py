@@ -48,11 +48,17 @@ def main():
     
     res = c.fetchall()
     
+    str = ''
     for f in res:
         create_file(f[3],f[4])
+
+        str += "* [%s](%s)\n" % (f[2],f[3]+suffix)
+        
+#     print str
     
-    
+    create_file('bolg_index',str)
     conn.close()
+
 
     
 reload(sys)                         # 2
