@@ -16,7 +16,7 @@ import os,sys
 
 
 # ghost 目录 
-ghost_path = './'  
+ghost_path = './'
 # ghost_path = 'E:/webroot/demo/Ghost-0.3.2/'
 
 # db 目录
@@ -56,7 +56,7 @@ def main():
         
 #     print str
     
-    create_file('bolg_index',str)
+    create_file('README',str)
     conn.close()
 
 
