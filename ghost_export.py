@@ -17,7 +17,7 @@ import os
 
 # ghost 目录 
 ghost_path = './'  
-ghost_path = 'E:/webroot/demo/Ghost-0.3.2/'
+# ghost_path = 'E:/webroot/demo/Ghost-0.3.2/'
 
 # db 目录
 db_path = ghost_path + 'content/data/ghost-dev.db' 
