@@ -13,3 +13,7 @@ ghost_export
 # 导出操作
 > python ghost_export.py
 </pre>
+
+
+### sever_start 
+* 直接打开npm start 的小工具. 放在Ghost的根目录下,直接运行就可以. 
