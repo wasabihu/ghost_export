@@ -387,6 +387,11 @@ zremrangebyscore hackers 1940 1960
 * 详情可参考Redis测试报告  http://my.oschina.net/fomy/blog/168399
 
 
+## 一些测试数据
+* 在8核 8G内存的服务器上,狂插140w条记录， 上面是redis，下面是httpsqs ,     redis比httpsqs快近一倍了
+![](https://raw.github.com/wasabihu/ghost_export/master/post/img/redis/test1.jpg)
+
+
 ## Redis 缺点
 
 ### 单台Redis的存放数据必须比物理内存小
