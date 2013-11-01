@@ -17,10 +17,11 @@ import os,sys
 
 # ghost 目录 
 ghost_path = './'
-# ghost_path = 'E:/webroot/demo/Ghost-0.3.2/'
+ghost_path = 'E:/webroot/demo/Ghost-0.3.2/'
 
 # db 目录
 db_path = ghost_path + 'content/data/ghost-dev.db'
+db_path = 'E:/快盘/ghost-dev.db'
 
 # 输出目录
 export_path = ghost_path +'post/'
@@ -48,7 +49,7 @@ def main():
     
     res = c.fetchall()
     
-    str = ''
+    str = '## index \n'
     for f in res:
         create_file(f[3],f[4])
 
@@ -68,7 +69,7 @@ sys.setdefaultencoding('utf-8')     # 3
 main()
 print "export file to %s" % export_path
 print "Finish!";    
-    
+
 
 
 # 游标对象有以下的操作：

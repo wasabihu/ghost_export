@@ -25,6 +25,10 @@ get key
 
 
 ## Redis 与 Memcached
+* 和Memcached不同，Redis并没有选择libevent。Libevent为了迎合通用性造成代码庞大(目前Redis代码还不到libevent的1/3)及牺牲了在特定平台的不少性能。Redis用libevent中两个文件修改实现了自己的epoll event loop。业界不少开发者也建议Redis使用另外一个libevent高性能替代libev，但是作者还是坚持Redis应该小巧并去依赖的思路。一个印象深刻的细节是编译Redis之前并不需要执行./configure。
+
+* CAS问题。CAS是Memcached中比较方便的一种防止竞争修改资源的方法。CAS实现需要为每个cache key设置一个隐藏的cas token，cas相当value版本号，每次set会token需要递增，因此带来CPU和内存的双重开销，虽然这些开销很小，但是到单机10G+ cache以及QPS上万之后这些开销就会给双方相对带来一些细微性能差别。
+
 * 这里可以引用作者的一段话来总结：
 
 > 没有必要过多的关心性能，因为二者的性能都已经足够高了。由于Redis只使用单核，而Memcached可以使用多核，所以在比较上，平均每一个核上Redis在存储小数据时比Memcached性能更高。而在100k以上的数据中，Memcached性能要高于Redis，虽然Redis最近也在存储大数据的性能上进行优化，但是比起Memcached，还是稍有逊色。说了这么多，结论是，无论你使用哪一个，每秒处理请求的次数都不会成为瓶颈。（比如瓶颈可能会在网卡）
@@ -46,6 +50,11 @@ Redis相比Memcached来说，拥有更多的数据结构和并支持更丰富的
 
 * 基于文档模型，使用上非常灵活，但我觉得我也是它的很大的缺点。
 * 文档模型是一种类似于json的文档格式，叫bson.
+
+> mongoDB 的全局锁很变态，在版本2.2之前都是全局锁，即实例锁。
+>
+最新版， 2.2后的最细粒度是库级锁，应该没打算实现表锁和行锁。(这真是一个很大的坑爹，我在这吃了不少苦头了！！！)
+
 <pre>
 就是在同一个数据集里，每个文档的数据都不相同，Mongo是没有作限制的。
 {'name':'Wasabi', 'age':30}
@@ -380,6 +389,8 @@ zremrangebyscore hackers 1940 1960
 
 ## Redis 缺点
 
+### 单台Redis的存放数据必须比物理内存小
+
 * 一但内存用完，要使用到硬盘的情况，性能会很糟糕。
 
 * 耗内存。尽管Redis对一些数据结构采用了压缩算法存储，但占用内存量还是过高。
@@ -387,3 +398,5 @@ zremrangebyscore hackers 1940 1960
 
 ## 一些关于NOSQL 的讨论
 * [Nosql 中，很多人都说 Redis 性能比 Memcached 好？这是事实吗？有哪些网站采用 Redis，使用 Memcached 较出色的网站是哪些？](http://www.zhihu.com/question/19595880)
+
+发表地址: [https://github.com/wasabihu/ghost_export/blob/master/post/redis.md](https://github.com/wasabihu/ghost_export/blob/master/post/redis.md)
