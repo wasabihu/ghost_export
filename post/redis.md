@@ -1,7 +1,19 @@
-##  Redis 是什么
 ![Redis](http://www.outman.com/wp-content/uploads/2012/03/redis-300dpi.png)
 
-* Redis是一个开源的使用ANSI C语言编写的基于内存的key/value存储系统，与memcache类似，但它支持的数据类型更为丰富，包括：字符串(string)、链表(list)、集合(set)、有序集合(sorted set)和hash table
+
+### 文章结构:
+
+#### Redis是什么
+#### 和其它NOSQL的比较
+#### Redis的数据结构
+#### 持久化策略
+#### 常见问题和解决方法
+
+
+
+##  Redis 是什么
+
+* **Redis**是一个开源的使用ANSI C语言编写的基于内存的key/value存储系统，与memcache类似，但它支持的数据类型更为丰富，包括：字符串(string)、链表(list)、集合(set)、有序集合(sorted set)和hash table
 
 * 性能极高 – Redis能支持超过 100K+ 每秒的读写频率。
 
@@ -222,13 +234,17 @@ typedef struct list {
 </pre>
 
 ### 集合类型
+![set](http://www.redisbook.com/en/latest/_images/graphviz-2f54a5b62b3507f0e6d579358e426c78b0dfbd5c.svg)
+
 * Redis集合是未排序的集合，其元素是二进制安全的字符串。
 
 * 集合的值是唯一不可重复的。 
 
 * 没有顺序。
 
-* Redis 内部是使用hash table实现，所以这些操作的时间复习度都是O(1). 最方便是多个集合类型键之间可以进行并集，交集和差集运算。(ps: 灰常强大的喔~)
+* 第一个添加到集合的元素， 决定了创建集合时所使用的编码：
+
+* Redis 内部是使用intset和 字典实现，所以这些操作的时间复习度都是O(1). 最方便是多个集合类型键之间可以进行并集，交集和差集运算。(ps: 灰常强大的喔~)
 
 
 * SADD命令可以向集合添加一个新元素。和sets相关的操作也有许多，比如检测某个元素是否存在，以及实现交集，并集，差集等等。一例胜千言：
@@ -392,13 +408,30 @@ zremrangebyscore hackers 1940 1960
 ![](https://raw.github.com/wasabihu/ghost_export/master/post/img/redis/test1.jpg)
 
 
-## Redis 缺点
+## Redis 常见问题和解决方法
 
-### 单台Redis的存放数据必须比物理内存小
+#### 单台Redis的存放数据必须比物理内存小
 
 * 一但内存用完，要使用到硬盘的情况，性能会很糟糕。
 
 * 耗内存。尽管Redis对一些数据结构采用了压缩算法存储，但占用内存量还是过高。
+
+#### Master写内存快照
+* save命令调度rdbSave函数，会阻塞主线程的工作，当快照比较大时对性能影响是非常大的，会间断性暂停服务，所以Master最好不要写内存快照。
+
+#### Master AOF持久化
+* 如果不重写AOF文件，这个持久化方式对性能的影响是最小的，但是AOF文件会不断增大，AOF文件过大会影响Master重启的恢复速度。
+
+#### Redis主从复制的性能问题
+* 第一次Slave向Master同步的实现是：Slave向Master发出同步请求，Master先dump出rdb文件，然后将rdb文件全量传输给slave，然后Master把缓存的命令转发给Slave，初次同步完成。第二次以及以后的同步实现是：Master将变量的快照直接实时依次发送给各个Slave。
+
+> 不管什么原因导致Slave和Master断开重连都会重复以上过程。Redis的主从复制是建立在内存快照的持久化基础上，只要有Slave就一定会有内存快照发生。虽然Redis宣称主从复制无阻塞，但由于Redis使用单线程服务，如果Master快照文件比较大，那么第一次全量传输会耗费比较长时间，且文件传输过程中Master可能无法提供服务，也就是说服务会中断，对于关键服务，这个后果也是很可怕的。
+以上1.2.3.4根本问题的原因都离不开系统io瓶颈问题，也就是硬盘读写速度不够快，主进程 fsync()/write() 操作被阻塞。
+
+
+
+
+
 
 
 ## 一些关于NOSQL 的讨论
